@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../api';
 import { useNavigate } from 'react-router-dom';
 import { Trash2, Edit2, LogOut } from 'lucide-react';
 
@@ -22,7 +22,7 @@ const Dashboard = () => {
 
   const fetchTasks = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/tasks', {
+      const res = await api.get('/api/tasks', {
         headers: { Authorization: `Bearer ${token}` }
       });
       setTasks(res.data);
@@ -46,12 +46,12 @@ const Dashboard = () => {
     e.preventDefault();
     try {
       if (editingId) {
-        await axios.put(`http://localhost:5000/api/tasks/${editingId}`, formData, {
+        await api.put(`/api/tasks/${editingId}`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setEditingId(null);
       } else {
-        await axios.post('http://localhost:5000/api/tasks', formData, {
+        await api.post('/api/tasks', formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
       }
@@ -65,7 +65,7 @@ const Dashboard = () => {
   const toggleStatus = async (task) => {
     try {
       const newStatus = task.status === 'pending' ? 'completed' : 'pending';
-      await axios.put(`http://localhost:5000/api/tasks/${task._id}`, { status: newStatus }, {
+      await api.put(`/api/tasks/${task._id}`, { status: newStatus }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchTasks();
@@ -77,7 +77,7 @@ const Dashboard = () => {
   const deleteTask = async (id) => {
     if (window.confirm('Are you sure you want to delete this task?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/tasks/${id}`, {
+        await api.delete(`/api/tasks/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         fetchTasks();
